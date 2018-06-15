@@ -1,0 +1,181 @@
+{
+  "cells": [
+    {
+      "metadata": {
+        "_cell_guid": "e81ee64d-e474-4662-9036-ce23df615199",
+        "_uuid": "b6269c0e8f417f82daf093dda8fa0da6d2c57d86"
+      },
+      "cell_type": "markdown",
+      "source": "# Intro\n**This is your workspace for Kaggle's Machine Learning course**\n\nYou will build and continually improve a model to predict housing prices as you work through each tutorial.\n\nThe tutorials you read use data from Melbourne. The Melbourne data is not available in this workspace.  Instead, you will translate the concepts to work with the data in this notebook, the Iowa data.\n\n# Write Your Code Below\n"
+    },
+    {
+      "metadata": {
+        "_cell_guid": "86b26423-563a-4fa1-a595-89e25ff93089",
+        "_uuid": "1c728098629e1301643443b1341556a15c089b2b",
+        "trusted": true,
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "#import pandas library\nimport pandas as pd\n#give a variable name to your lowa file path for easy accessiblity\nlova_data='../input/train.csv'\n#read the data to a DataFrame named lova_house_data\n\nlova_house_data= pd.read_csv(lova_data)\nlova_house_data.head(5)\n\n",
+      "execution_count": 16,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "d856c3a3b7cacd36ad6d03067e7b86cc19e155b9",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "lova_price_data=lova_house_data.SalePrice\nlova_price_data.head()\nlova_price_data.describe()\ncolumn_of_interest=['LotFrontage', 'LotArea', 'Street','LotShape', 'LandContour','LandSlope','BldgType','HouseStyle','MasVnrArea','Foundation','GrLivArea','GarageArea','PoolArea']\nMul_column_of_data=lova_house_data[column_of_interest]\nMul_column_of_data.describe()",
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "b4e33891a631678830b240d8c9db78f2abb538c0",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "import seaborn as sns\nimport matplotlib.pyplot as plt\n%matplotlib inline\nMul_column_of_data.head()",
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "1e3f10fed71733ec61225326830e5464a31017ff",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "\n\ny=lova_house_data.SalePrice\nlova_predictors=['LotArea','YearBuilt','1stFlrSF','2ndFlrSF','FullBath','BedroomAbvGr','TotRmsAbvGrd']\n\n\nX=lova_house_data[lova_predictors]\n#len(X['PoolArea'].unique())\n#X.GrLivArea.value_counts()\n#X.GrLivArea.nunique()\n#X.drop('GrLivArea',axis=1)\n\n\n#X.MasVnrArea.mean()\n#X.MasVnrArea=103.68\nplt.subplots(figsize=(20,15))\nsns.heatmap(X.isnull(),cbar=False, yticklabels=False,cmap='viridis')\n",
+      "execution_count": 5,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "1c5de75b6c81a259786336fa341572fddf0120f3",
+        "scrolled": true,
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "#import Decision tree regressor from sklearn\nfrom sklearn.tree import DecisionTreeRegressor\n#instantiate the model\nDTR_model=DecisionTreeRegressor()\n\n# fit your data to the model\nDTR_model.fit(X,y)",
+      "execution_count": 6,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "b905ad7896563de99d61bcb5ef9da64050f210d6",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "print(\"Making predictions for the following 5 houses:\")\nprint(X.head())\nprint(\"The predictions are\")\npred=DTR_model.predict(X)\nprint(pred)\n",
+      "execution_count": 7,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "35a3cc99c36b8dd54b0882bbca500a2d5bcb3098",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "from sklearn.metrics import mean_absolute_error\nprint(mean_absolute_error(pred,y))",
+      "execution_count": 8,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "256ad5f2e1d288d7b8195d91e33fff841c1682d6",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "from sklearn.model_selection import train_test_split\n\nX_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.30,random_state=0)\n#y_train.count()\n#X_test.count()\nlova_model=DecisionTreeRegressor()\nlova_model.fit(X_train,y_train)",
+      "execution_count": 9,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "a1fb7a84b7354f3306074140dcc033cef4df7228",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "pred1=lova_model.predict(X_test)\npred\nfrom sklearn.metrics import mean_absolute_error,classification_report\nprint(mean_absolute_error(pred1,y_test))\nprint(classification_report(y_test,pred1))",
+      "execution_count": 10,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "collapsed": true,
+        "_uuid": "3c3b3322dca84943e14b2895eabba48b8367125f"
+      },
+      "cell_type": "code",
+      "source": "from sklearn.metrics import mean_absolute_error\nfrom sklearn.tree import DecisionTreeRegressor\n\ndef get_mae(max_leaf_nodes, predictors_train, predictors_val, targ_train, targ_val):\n    model = DecisionTreeRegressor(max_leaf_nodes=max_leaf_nodes, random_state=0)\n    model.fit(predictors_train, targ_train)\n    preds_val = model.predict(predictors_val)\n    mae = mean_absolute_error(targ_val, preds_val)\n    return(mae)",
+      "execution_count": 11,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "56277c65dfd7bf4ca0e9869f73ec93afb2644e11",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "# compare MAE with differing values of max_leaf_nodes\nfor max_leaf_nodes in [5, 50, 500, 5000]:\n    my_mae = get_mae(max_leaf_nodes, X_train, X_test, y_train, y_test)\n    print(\"Max leaf nodes: %d  \\t\\t Mean Absolute Error:  %d\" %(max_leaf_nodes, my_mae))",
+      "execution_count": 13,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "trusted": true,
+        "_uuid": "d09cb8f51f190653b44c94f0657ba11764d96e04",
+        "collapsed": true
+      },
+      "cell_type": "code",
+      "source": "from sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_absolute_error\n\nForest_model= RandomForestRegressor()\nForest_model.fit(X_train,y_train)\nFor_pred=Forest_model.predict(X_test)\nprint(mean_absolute_error(For_pred,y_test))",
+      "execution_count": 15,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "_uuid": "5993d6bbf5e7c47ffc4e10dd0a3940783d861573"
+      },
+      "cell_type": "markdown",
+      "source": "\n**If you have any questions or hit any problems, come to the [Learn Discussion](https://www.kaggle.com/learn-forum) for help. **\n\n**Return to [ML Course Index](https://www.kaggle.com/learn/machine-learning)**"
+    },
+    {
+      "metadata": {
+        "_uuid": "04becaecca84c4b4d7e81563a64ba8c8a605fec4"
+      },
+      "cell_type": "markdown",
+      "source": ""
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.6.5",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 1
+}
